@@ -1,7 +1,7 @@
 const User = require('../model/User');
 const bcrypt = require('bcrypt');
 const crypto = require('crypto');
-const resend = require('../config/nodemailer');
+const emailer = require('../config/nodemailer');
 
 const forgotPassword = async (req, res) => {
     const email = req.body?.email;
@@ -33,8 +33,7 @@ const forgotPassword = async (req, res) => {
         user.resetPasswordExpires = Date.now() + 10 * 60 * 1000;
         await user.save();
 
-        await resend.emails.send({
-            from: 'onboarding@resend.dev',
+        await emailer.sendEmail({
             to: user.email,
             subject: 'Your password reset code',
             text: `Your password reset code is ${code}. It expires in 10 minutes.`,
