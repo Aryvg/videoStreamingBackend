@@ -8,7 +8,7 @@ async function sendEmail({ to, subject, text, html }) {
         },
         body: JSON.stringify({
             sender: {
-                name: 'My App',
+                name: 'Video-streaming-app',
                 email: process.env.EMAIL_USER
             },
             to: [{ email: to }],
