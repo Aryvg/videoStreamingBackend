@@ -1,7 +1,7 @@
 const User = require('../model/User');
 const bcrypt = require('bcrypt');
 const crypto = require('crypto');
-const resend = require('../config/nodemailer');
+const emailer = require('../config/nodemailer');
 //to remove duplicate error start from here
 const mongoose = require('mongoose');
 
@@ -25,14 +25,12 @@ const sendVerificationCode = async (user) => {
     const code = crypto.randomInt(100000, 1000000).toString();
     const hashedCode = await bcrypt.hash(code, 10);
 
-    // Store only the bcrypt hash, never the plain code.
     user.verificationCode = hashedCode;
     user.verificationExpires = Date.now() + 15 * 60 * 1000;
     await user.save();
 
     try {
-        await resend.emails.send({
-            from: 'onboarding@resend.dev',
+        await emailer.sendEmail({
             to: user.email,
             subject: 'Verify your email',
             text: `Your verification code is ${code}. It expires in 15 minutes.`,
